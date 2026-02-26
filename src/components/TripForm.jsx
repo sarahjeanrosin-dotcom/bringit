@@ -2,24 +2,30 @@ import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 const ACTIVITIES = [
-  { id: 'beach',      label: 'Beach',        emoji: '🏖️' },
-  { id: 'hiking',     label: 'Hiking',       emoji: '🥾' },
-  { id: 'swimming',   label: 'Swimming',     emoji: '🏊' },
-  { id: 'skiing',     label: 'Skiing',       emoji: '⛷️' },
-  { id: 'surfing',    label: 'Surfing',      emoji: '🏄' },
-  { id: 'sightseeing',label: 'Sightseeing',  emoji: '🗺️' },
-  { id: 'dining',     label: 'Fine Dining',  emoji: '🍽️' },
-  { id: 'nightlife',  label: 'Nightlife',    emoji: '🎉' },
-  { id: 'festivals',  label: 'Festivals',    emoji: '🎪' },
-  { id: 'sports',     label: 'Sports',       emoji: '⚽' },
-  { id: 'yoga',       label: 'Yoga',         emoji: '🧘' },
-  { id: 'running',    label: 'Running',      emoji: '🏃' },
-  { id: 'photography',label: 'Photography',  emoji: '📸' },
-  { id: 'wildlife',   label: 'Wildlife',     emoji: '🦁' },
-  { id: 'scuba',      label: 'Scuba Diving', emoji: '🤿' },
-  { id: 'fishing',    label: 'Fishing',      emoji: '🎣' },
-  { id: 'camping',    label: 'Camping',      emoji: '🏕️' },
-  { id: 'work',       label: 'Work / Remote',emoji: '💻' },
+  { id: 'beach',        label: 'Beach',          emoji: '🏖️' },
+  { id: 'hiking',       label: 'Hiking',         emoji: '🥾' },
+  { id: 'swimming',     label: 'Swimming',        emoji: '🏊' },
+  { id: 'snorkeling',   label: 'Snorkeling',      emoji: '🤿' },
+  { id: 'skiing',       label: 'Skiing',          emoji: '⛷️' },
+  { id: 'surfing',      label: 'Surfing',         emoji: '🏄' },
+  { id: 'sightseeing',  label: 'Sightseeing',     emoji: '🗺️' },
+  { id: 'dining',       label: 'Fine Dining',     emoji: '🍽️' },
+  { id: 'nightlife',    label: 'Nightlife',       emoji: '🎉' },
+  { id: 'festivals',    label: 'Festivals',       emoji: '🎪' },
+  { id: 'sports',       label: 'Sports',          emoji: '⚽' },
+  { id: 'yoga',         label: 'Yoga',            emoji: '🧘' },
+  { id: 'running',      label: 'Running',         emoji: '🏃' },
+  { id: 'cycling',      label: 'Cycling',         emoji: '🚴' },
+  { id: 'kayaking',     label: 'Kayaking',        emoji: '🛶' },
+  { id: 'rockClimbing', label: 'Rock Climbing',   emoji: '🧗' },
+  { id: 'birdwatching', label: 'Birdwatching',    emoji: '🦅' },
+  { id: 'photography',  label: 'Photography',     emoji: '📸' },
+  { id: 'wildlife',     label: 'Wildlife',        emoji: '🦁' },
+  { id: 'scuba',        label: 'Scuba Diving',    emoji: '🤿' },
+  { id: 'fishing',      label: 'Fishing',         emoji: '🎣' },
+  { id: 'camping',      label: 'Camping',         emoji: '🏕️' },
+  { id: 'spa',          label: 'Spa & Wellness',  emoji: '💆' },
+  { id: 'work',         label: 'Work / Remote',   emoji: '💻' },
 ];
 
 const WEATHER_OPTIONS = [
@@ -30,23 +36,30 @@ const WEATHER_OPTIONS = [
 ];
 
 const TRAVEL_MODES = [
-  { id: 'plane',  label: 'Plane',   emoji: '✈️' },
-  { id: 'car',    label: 'Car',     emoji: '🚗' },
-  { id: 'train',  label: 'Train',   emoji: '🚂' },
-  { id: 'bus',    label: 'Bus',     emoji: '🚌' },
-  { id: 'cruise', label: 'Cruise',  emoji: '🚢' },
+  { id: 'plane',     label: 'Plane',      emoji: '✈️' },
+  { id: 'car',       label: 'Own Car',    emoji: '🚗' },
+  { id: 'rentalCar', label: 'Rental Car', emoji: '🚙' },
+  { id: 'train',     label: 'Train',      emoji: '🚂' },
+  { id: 'bus',       label: 'Bus',        emoji: '🚌' },
+  { id: 'cruise',    label: 'Cruise',     emoji: '🚢' },
 ];
 
 const ACCOMMODATIONS = [
-  { id: 'hotel',   label: 'Hotel',   emoji: '🏨' },
-  { id: 'airbnb',  label: 'Airbnb',  emoji: '🏡' },
-  { id: 'hostel',  label: 'Hostel',  emoji: '🛏️' },
-  { id: 'camping', label: 'Camping', emoji: '⛺' },
-  { id: 'cruise',  label: 'Cruise',  emoji: '🚢' },
-  { id: 'family',  label: 'Family / Friends', emoji: '👨‍👩‍👧' },
+  { id: 'hotel',   label: 'Hotel',              emoji: '🏨' },
+  { id: 'airbnb',  label: 'Airbnb',             emoji: '🏡' },
+  { id: 'hostel',  label: 'Hostel',             emoji: '🛏️' },
+  { id: 'camping', label: 'Camping',            emoji: '⛺' },
+  { id: 'cruise',  label: 'Cruise',             emoji: '🚢' },
+  { id: 'family',  label: 'Family / Friends',   emoji: '👨‍👩‍👧' },
 ];
 
 const STEPS = ['Trip Basics', 'Weather & Travel', 'Accommodation', 'Activities', 'Travelers'];
+
+const TODAY = new Date().toISOString().split('T')[0];
+
+function diffDays(start, end) {
+  return Math.max(1, Math.round((new Date(end) - new Date(start)) / 86400000));
+}
 
 export default function TripForm({ onSubmit }) {
   const [step, setStep] = useState(0);
@@ -54,18 +67,125 @@ export default function TripForm({ onSubmit }) {
     name: '',
     destination: '',
     zipCode: '',
+    startDate: '',
+    endDate: '',
     days: 5,
     travelers: 2,
     hasKids: false,
     isInternational: false,
     weather: '',
-    travelMode: '',
+    travelModes: [],
     accommodation: '',
     activities: [],
   });
 
+  // UI state
+  const [zipLoading, setZipLoading] = useState(false);
+  const [weatherLoading, setWeatherLoading] = useState(false);
+  const [weatherNote, setWeatherNote] = useState('');
+
   const set = (key, val) => setForm(f => ({ ...f, [key]: val }));
 
+  // ── Date helpers ──────────────────────────────────────────────
+  const handleDates = (key, val) => {
+    setForm(f => {
+      const next = { ...f, [key]: val };
+      if (next.startDate && next.endDate && next.endDate > next.startDate) {
+        next.days = diffDays(next.startDate, next.endDate);
+      }
+      return next;
+    });
+  };
+
+  // ── Zip auto-detect via Geolocation + Nominatim ──────────────
+  const detectZip = () => {
+    if (!navigator.geolocation) return;
+    setZipLoading(true);
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        try {
+          const { latitude, longitude } = pos.coords;
+          const res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
+          );
+          const data = await res.json();
+          set('zipCode', data.address?.postcode || '');
+        } catch { /* leave blank on error */ }
+        setZipLoading(false);
+      },
+      () => setZipLoading(false)
+    );
+  };
+
+  // ── Weather auto-fetch via Nominatim geocode + Open-Meteo ─────
+  const fetchWeather = async () => {
+    if (!form.destination.trim()) {
+      setWeatherNote('Enter a destination first.');
+      return;
+    }
+    setWeatherLoading(true);
+    setWeatherNote('');
+    try {
+      // 1. Geocode destination
+      const geoRes = await fetch(
+        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(form.destination)}&format=json&limit=1`
+      );
+      const geoData = await geoRes.json();
+      if (!geoData.length) {
+        setWeatherNote('Destination not found — select weather manually.');
+        setWeatherLoading(false);
+        return;
+      }
+      const { lat, lon } = geoData[0];
+
+      // 2. Clamp date range to Open-Meteo's 16-day forecast window
+      const todayDate = new Date();
+      const start = form.startDate ? new Date(form.startDate) : todayDate;
+      const end   = form.endDate   ? new Date(form.endDate)   : new Date(start.getTime() + form.days * 86400000);
+      const maxForecast = new Date(todayDate);
+      maxForecast.setDate(maxForecast.getDate() + 15);
+
+      if (start > maxForecast) {
+        setWeatherNote('Dates are beyond the 16-day forecast window — select weather manually.');
+        setWeatherLoading(false);
+        return;
+      }
+      const clampedEnd = end > maxForecast ? maxForecast : end;
+      const fmt = d => d.toISOString().split('T')[0];
+
+      // 3. Fetch Open-Meteo forecast (free, no API key)
+      const wxRes = await fetch(
+        `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
+        `&daily=temperature_2m_max,precipitation_sum&start_date=${fmt(start)}&end_date=${fmt(clampedEnd)}&timezone=auto`
+      );
+      const wxData = await wxRes.json();
+
+      if (!wxData.daily?.temperature_2m_max?.length) {
+        setWeatherNote('Forecast unavailable — select weather manually.');
+        setWeatherLoading(false);
+        return;
+      }
+
+      const temps   = wxData.daily.temperature_2m_max.filter(v => v !== null);
+      const precips = wxData.daily.precipitation_sum.filter(v => v !== null);
+      const avgTemp   = temps.reduce((a, b) => a + b, 0) / temps.length;
+      const avgPrecip = precips.length ? precips.reduce((a, b) => a + b, 0) / precips.length : 0;
+
+      let weather;
+      if (avgPrecip > 5)      weather = 'rainy';
+      else if (avgTemp >= 27) weather = 'hot';
+      else if (avgTemp < 5)   weather = 'cold';
+      else                    weather = 'mild';
+
+      set('weather', weather);
+      setWeatherNote(`Forecast: avg ${Math.round(avgTemp)}°C, ${Math.round(avgPrecip)} mm/day precip`);
+    } catch {
+      setWeatherNote('Could not fetch forecast — select weather manually.');
+    }
+    setWeatherLoading(false);
+  };
+
+  // ── Activity / travelMode toggles ─────────────────────────────
   const toggleActivity = (id) => {
     setForm(f => ({
       ...f,
@@ -75,9 +195,18 @@ export default function TripForm({ onSubmit }) {
     }));
   };
 
+  const toggleTravelMode = (id) => {
+    setForm(f => ({
+      ...f,
+      travelModes: f.travelModes.includes(id)
+        ? f.travelModes.filter(m => m !== id)
+        : [...f.travelModes, id],
+    }));
+  };
+
   const canNext = () => {
     if (step === 0) return form.name.trim() && form.destination.trim() && form.days >= 1;
-    if (step === 1) return form.weather && form.travelMode;
+    if (step === 1) return form.weather && form.travelModes.length > 0;
     if (step === 2) return form.accommodation;
     if (step === 3) return true;
     if (step === 4) return form.travelers >= 1;
@@ -105,14 +234,14 @@ export default function TripForm({ onSubmit }) {
               flex: 1,
               textAlign: 'center',
             }}>
-              {i < step ? '✓' : i === step ? s : s}
+              {i < step ? '✓' : s}
             </span>
           ))}
         </div>
         <div style={{ height: 6, borderRadius: 9999, background: '#e2e8f0', overflow: 'hidden' }}>
           <div style={{
             height: '100%',
-            width: `${((step) / (STEPS.length - 1)) * 100}%`,
+            width: `${(step / (STEPS.length - 1)) * 100}%`,
             background: 'linear-gradient(135deg, #0ea5e9, #14b8a6)',
             borderRadius: 9999,
             transition: 'width 0.4s ease',
@@ -120,12 +249,13 @@ export default function TripForm({ onSubmit }) {
         </div>
       </div>
 
-      {/* Step 0: Trip Basics */}
+      {/* ── Step 0: Trip Basics ─────────────────────────────────── */}
       {step === 0 && (
         <div className="slide-in">
           <div className="form-section">
             <div className="form-section-title">🌍 Trip Details</div>
             <div style={{ display: 'grid', gap: '1rem' }}>
+
               <div>
                 <label>Trip Name</label>
                 <input
@@ -135,6 +265,7 @@ export default function TripForm({ onSubmit }) {
                   onChange={e => set('name', e.target.value)}
                 />
               </div>
+
               <div>
                 <label>Destination</label>
                 <input
@@ -144,32 +275,79 @@ export default function TripForm({ onSubmit }) {
                   onChange={e => set('destination', e.target.value)}
                 />
               </div>
+
               <div>
                 <label>Zip / Postal Code (departure)</label>
-                <input
-                  className="input-field"
-                  placeholder="e.g. 90210"
-                  value={form.zipCode}
-                  onChange={e => set('zipCode', e.target.value)}
-                />
-              </div>
-              <div>
-                <label>Number of Days</label>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <input
+                    className="input-field"
+                    placeholder="e.g. 90210"
+                    value={form.zipCode}
+                    onChange={e => set('zipCode', e.target.value)}
+                    style={{ flex: 1 }}
+                  />
                   <button
-                    style={{ width: 40, height: 40, borderRadius: '50%', border: '2px solid #e2e8f0', background: 'white', fontSize: '1.25rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                    onClick={() => set('days', Math.max(1, form.days - 1))}
                     type="button"
-                  >−</button>
-                  <span style={{ fontSize: '1.5rem', fontWeight: 800, minWidth: 40, textAlign: 'center', color: '#0ea5e9' }}>{form.days}</span>
-                  <button
-                    style={{ width: 40, height: 40, borderRadius: '50%', border: '2px solid #e2e8f0', background: 'white', fontSize: '1.25rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                    onClick={() => set('days', Math.min(60, form.days + 1))}
-                    type="button"
-                  >+</button>
-                  <span style={{ color: '#64748b', fontSize: '0.9rem' }}>night{form.days !== 1 ? 's' : ''}</span>
+                    className="btn-secondary"
+                    onClick={detectZip}
+                    disabled={zipLoading}
+                    style={{ whiteSpace: 'nowrap', padding: '0.625rem 1rem', fontSize: '0.85rem' }}
+                    title="Auto-detect from your current location"
+                  >
+                    {zipLoading ? '⏳' : '📍 Detect'}
+                  </button>
                 </div>
               </div>
+
+              <div>
+                <label>Travel Dates</label>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                  <div>
+                    <label style={{ fontSize: '0.78rem', color: '#94a3b8', marginBottom: '0.25rem' }}>Departure</label>
+                    <input
+                      type="date"
+                      className="input-field"
+                      value={form.startDate}
+                      min={TODAY}
+                      onChange={e => handleDates('startDate', e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '0.78rem', color: '#94a3b8', marginBottom: '0.25rem' }}>Return</label>
+                    <input
+                      type="date"
+                      className="input-field"
+                      value={form.endDate}
+                      min={form.startDate || TODAY}
+                      onChange={e => handleDates('endDate', e.target.value)}
+                    />
+                  </div>
+                </div>
+                {form.startDate && form.endDate ? (
+                  <p style={{ fontSize: '0.85rem', color: '#0ea5e9', fontWeight: 700, marginTop: '0.5rem' }}>
+                    📅 {form.days} night{form.days !== 1 ? 's' : ''}
+                  </p>
+                ) : (
+                  <div style={{ marginTop: '0.75rem' }}>
+                    <label style={{ fontSize: '0.78rem', color: '#94a3b8' }}>Or set duration manually</label>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginTop: '0.375rem' }}>
+                      <button
+                        style={{ width: 36, height: 36, borderRadius: '50%', border: '2px solid #e2e8f0', background: 'white', fontSize: '1.1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                        onClick={() => set('days', Math.max(1, form.days - 1))}
+                        type="button"
+                      >−</button>
+                      <span style={{ fontSize: '1.5rem', fontWeight: 800, minWidth: 40, textAlign: 'center', color: '#0ea5e9' }}>{form.days}</span>
+                      <button
+                        style={{ width: 36, height: 36, borderRadius: '50%', border: '2px solid #e2e8f0', background: 'white', fontSize: '1.1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                        onClick={() => set('days', Math.min(60, form.days + 1))}
+                        type="button"
+                      >+</button>
+                      <span style={{ color: '#64748b', fontSize: '0.9rem' }}>night{form.days !== 1 ? 's' : ''}</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+
               <div>
                 <label style={{ marginBottom: '0.5rem' }}>International Trip?</label>
                 <div style={{ display: 'flex', gap: '0.75rem' }}>
@@ -185,16 +363,36 @@ export default function TripForm({ onSubmit }) {
                   ))}
                 </div>
               </div>
+
             </div>
           </div>
         </div>
       )}
 
-      {/* Step 1: Weather & Travel */}
+      {/* ── Step 1: Weather & Travel ────────────────────────────── */}
       {step === 1 && (
         <div className="slide-in">
           <div className="form-section">
             <div className="form-section-title">🌤️ Expected Weather</div>
+
+            {/* Auto-detect button */}
+            <div style={{ marginBottom: '1rem' }}>
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={fetchWeather}
+                disabled={weatherLoading}
+                style={{ fontSize: '0.85rem', padding: '0.5rem 1.25rem' }}
+              >
+                {weatherLoading ? '⏳ Fetching…' : '🌐 Auto-detect from destination & dates'}
+              </button>
+              {weatherNote && (
+                <p style={{ marginTop: '0.5rem', fontSize: '0.8rem', color: weatherNote.startsWith('Forecast:') ? '#0ea5e9' : '#f59e0b', fontWeight: 600 }}>
+                  {weatherNote}
+                </p>
+              )}
+            </div>
+
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
               {WEATHER_OPTIONS.map(w => (
                 <button
@@ -218,25 +416,32 @@ export default function TripForm({ onSubmit }) {
               ))}
             </div>
           </div>
+
           <div className="form-section">
-            <div className="form-section-title">🚀 Mode of Travel</div>
+            <div className="form-section-title">🚀 Mode(s) of Travel</div>
+            <p style={{ fontSize: '0.82rem', color: '#64748b', marginBottom: '0.75rem' }}>Select all that apply — e.g. fly there, rent a car at the destination.</p>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.625rem' }}>
               {TRAVEL_MODES.map(m => (
                 <button
                   key={m.id}
                   type="button"
-                  className={`chip-toggle ${form.travelMode === m.id ? 'active' : ''}`}
-                  onClick={() => set('travelMode', m.id)}
+                  className={`chip-toggle ${form.travelModes.includes(m.id) ? 'active' : ''}`}
+                  onClick={() => toggleTravelMode(m.id)}
                 >
                   {m.emoji} {m.label}
                 </button>
               ))}
             </div>
+            {form.travelModes.length === 0 && (
+              <p style={{ marginTop: '0.625rem', fontSize: '0.8rem', color: '#f59e0b', fontWeight: 600 }}>
+                ⚠️ Select at least one transport mode to continue.
+              </p>
+            )}
           </div>
         </div>
       )}
 
-      {/* Step 2: Accommodation */}
+      {/* ── Step 2: Accommodation ───────────────────────────────── */}
       {step === 2 && (
         <div className="slide-in">
           <div className="form-section">
@@ -270,7 +475,7 @@ export default function TripForm({ onSubmit }) {
         </div>
       )}
 
-      {/* Step 3: Activities */}
+      {/* ── Step 3: Activities ──────────────────────────────────── */}
       {step === 3 && (
         <div className="slide-in">
           <div className="form-section">
@@ -297,7 +502,7 @@ export default function TripForm({ onSubmit }) {
         </div>
       )}
 
-      {/* Step 4: Travelers */}
+      {/* ── Step 4: Travelers ───────────────────────────────────── */}
       {step === 4 && (
         <div className="slide-in">
           <div className="form-section">
@@ -357,13 +562,13 @@ export default function TripForm({ onSubmit }) {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', fontSize: '0.875rem' }}>
               {[
                 ['📍', form.destination],
-                ['📅', `${form.days} nights`],
+                ['📅', form.startDate ? `${form.startDate} → ${form.endDate || '?'} (${form.days}n)` : `${form.days} nights`],
                 ['👥', `${form.travelers} traveler${form.travelers !== 1 ? 's' : ''}${form.hasKids ? ' + kids' : ''}`],
                 ['🌤️', form.weather],
-                ['🚀', form.travelMode],
+                ['🚀', form.travelModes.length ? form.travelModes.join(', ') : '—'],
                 ['🏨', form.accommodation],
                 ['🌐', form.isInternational ? 'International' : 'Domestic'],
-                ['🎯', form.activities.length ? `${form.activities.length} activities` : 'No activities'],
+                ['🎯', form.activities.length ? `${form.activities.length} activities` : 'None selected'],
               ].map(([icon, val]) => (
                 <div key={icon} style={{ display: 'flex', gap: '0.375rem', alignItems: 'center' }}>
                   <span>{icon}</span>
