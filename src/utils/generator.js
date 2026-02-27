@@ -2,10 +2,20 @@ import { ALL_ITEMS, CATEGORIES } from '../data/packingItems';
 import { v4 as uuidv4 } from 'uuid';
 
 export function generatePackingList(tripData) {
-  const { days, travelers } = tripData;
+  // Normalize: support both old travelMode string and new travelModes array
+  const normalized = {
+    ...tripData,
+    travelModes: Array.isArray(tripData.travelModes) && tripData.travelModes.length
+      ? tripData.travelModes
+      : tripData.travelMode
+      ? [tripData.travelMode]
+      : [],
+  };
+
+  const { days, travelers } = normalized;
 
   const items = ALL_ITEMS
-    .filter(item => item.cond(tripData))
+    .filter(item => item.cond(normalized))
     .map(item => ({
       id: uuidv4(),
       sourceId: item.id,
