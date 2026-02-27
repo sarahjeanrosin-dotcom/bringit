@@ -381,3 +381,28 @@ label {
 .step-dot.done {
   background: rgba(255,255,255,0.75);
 }
+
+/* ===== PRINT STYLES ===== */
+.print-only { display: none; }
+
+@media print {
+  body {
+    background: white !important;
+    font-size: 11pt;
+    font-family: 'Nunito', sans-serif;
+  }
+
+  header,
+  .no-print {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  /* prevent categories from splitting across pages */
+  [style*="pageBreakInside: avoid"] {
+    page-break-inside: avoid;
+  }
+}
