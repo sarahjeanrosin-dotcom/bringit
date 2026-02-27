@@ -81,6 +81,7 @@ export default function TripForm({ onSubmit }) {
 
   // UI state
   const [zipLoading, setZipLoading] = useState(false);
+  const [zipNote, setZipNote] = useState('');
   const [weatherLoading, setWeatherLoading] = useState(false);
   const [weatherNote, setWeatherNote] = useState('');
 
@@ -97,24 +98,29 @@ export default function TripForm({ onSubmit }) {
     });
   };
 
-  // ── Zip auto-detect via Geolocation + Nominatim ──────────────
-  const detectZip = () => {
-    if (!navigator.geolocation) return;
+  // ── Zip auto-detect via destination → Nominatim /search ──────
+  const detectZip = async () => {
+    if (!form.destination.trim()) {
+      setZipNote('Enter a destination first.');
+      return;
+    }
     setZipLoading(true);
-    navigator.geolocation.getCurrentPosition(
-      async (pos) => {
-        try {
-          const { latitude, longitude } = pos.coords;
-          const res = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
-          );
-          const data = await res.json();
-          set('zipCode', data.address?.postcode || '');
-        } catch { /* leave blank on error */ }
-        setZipLoading(false);
-      },
-      () => setZipLoading(false)
-    );
+    setZipNote('');
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=jsonv2&q=${encodeURIComponent(form.destination)}&addressdetails=1&limit=1`
+      );
+      const data = await res.json();
+      const postcode = data[0]?.address?.postcode || data[0]?.address?.postal_code || '';
+      if (postcode) {
+        set('zipCode', postcode);
+      } else {
+        setZipNote('ZIP not available for this destination.');
+      }
+    } catch {
+      setZipNote('ZIP not available for this destination.');
+    }
+    setZipLoading(false);
   };
 
   // ── Weather auto-fetch via Nominatim geocode + Open-Meteo ─────
@@ -277,7 +283,7 @@ export default function TripForm({ onSubmit }) {
               </div>
 
               <div>
-                <label>Zip / Postal Code (departure)</label>
+                <label>Zip / Postal Code (destination)</label>
                 <div style={{ display: 'flex', gap: '0.5rem' }}>
                   <input
                     className="input-field"
@@ -292,11 +298,16 @@ export default function TripForm({ onSubmit }) {
                     onClick={detectZip}
                     disabled={zipLoading}
                     style={{ whiteSpace: 'nowrap', padding: '0.625rem 1rem', fontSize: '0.85rem' }}
-                    title="Auto-detect from your current location"
+                    title="Auto-detect from destination"
                   >
                     {zipLoading ? '⏳' : '📍 Detect'}
                   </button>
                 </div>
+                {zipNote && (
+                  <p style={{ marginTop: '0.375rem', fontSize: '0.8rem', color: '#f59e0b', fontWeight: 600 }}>
+                    {zipNote}
+                  </p>
+                )}
               </div>
 
               <div>
