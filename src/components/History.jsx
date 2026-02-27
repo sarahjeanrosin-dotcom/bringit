@@ -1,11 +1,18 @@
 import { countStats } from '../utils/generator';
 
 const WEATHER_EMOJI = { hot: '☀️', mild: '⛅', cold: '❄️', rainy: '🌧️' };
-const TRAVEL_EMOJI  = { plane: '✈️', car: '🚗', train: '🚂', bus: '🚌', cruise: '🚢' };
+const TRAVEL_EMOJI  = { plane: '✈️', car: '🚗', rentalCar: '🚙', train: '🚂', bus: '🚌', cruise: '🚢' };
 const ACCOM_EMOJI   = { hotel: '🏨', airbnb: '🏡', hostel: '🛏️', camping: '⛺', cruise: '🚢', family: '👨‍👩‍👧' };
 
 function formatDate(iso) {
   return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+// Support both old travelMode string and new travelModes array
+function getTravelModes(trip) {
+  if (Array.isArray(trip.travelModes) && trip.travelModes.length) return trip.travelModes;
+  if (trip.travelMode) return [trip.travelMode];
+  return [];
 }
 
 export default function History({ trips, onOpen, onDuplicate, onDelete }) {
@@ -34,17 +41,23 @@ export default function History({ trips, onOpen, onDuplicate, onDelete }) {
         {trips.map(trip => {
           const { total, checked } = countStats(trip.packingList || {});
           const pct = total > 0 ? Math.round((checked / total) * 100) : 0;
+          const modes = getTravelModes(trip);
 
           return (
             <div key={trip.id} className="trip-card">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.75rem' }}>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontWeight: 800, fontSize: '1.05rem', color: '#0f172a', marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <div style={{ fontWeight: 800, fontSize: '1.05rem', color: '#0f172a', marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
                     🎒 {trip.name}
                     {trip.isInternational && <span className="badge badge-violet">🌐 Intl</span>}
                   </div>
                   <div style={{ color: '#475569', fontSize: '0.875rem', marginBottom: '0.5rem' }}>
                     📍 {trip.destination} · {formatDate(trip.createdAt)}
+                    {trip.startDate && (
+                      <span style={{ marginLeft: '0.375rem', color: '#94a3b8' }}>
+                        ({trip.startDate} → {trip.endDate || '?'})
+                      </span>
+                    )}
                   </div>
 
                   {/* Badges */}
@@ -52,7 +65,9 @@ export default function History({ trips, onOpen, onDuplicate, onDelete }) {
                     <span className="badge badge-sky">{trip.days}n</span>
                     <span className="badge badge-teal">👥 {trip.travelers}</span>
                     {trip.weather && <span className="badge badge-amber">{WEATHER_EMOJI[trip.weather]} {trip.weather}</span>}
-                    {trip.travelMode && <span className="badge badge-sky">{TRAVEL_EMOJI[trip.travelMode] || ''} {trip.travelMode}</span>}
+                    {modes.map(m => (
+                      <span key={m} className="badge badge-sky">{TRAVEL_EMOJI[m] || ''} {m}</span>
+                    ))}
                     {trip.accommodation && <span className="badge badge-rose">{ACCOM_EMOJI[trip.accommodation] || ''} {trip.accommodation}</span>}
                     {trip.hasKids && <span className="badge badge-violet">👶 Kids</span>}
                   </div>
